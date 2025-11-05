@@ -16,7 +16,7 @@ QueueHandle_t xQueueButton;
 void setup() {
     Serial.begin(115200);
     // PinMode
-
+    pinMode(BUTTON_START, INPUT_PULLUP);
     // Tạo queue có thể chứa 10 phần tử kiểu int
     xQueueButton = xQueueCreate(10, sizeof(uint8_t));
     if (xQueueButton == NULL) {
