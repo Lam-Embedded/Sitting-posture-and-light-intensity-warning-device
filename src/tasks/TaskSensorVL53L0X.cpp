@@ -1,5 +1,7 @@
 #include "TaskSensorVL53L0X.h"
 
+extern QueueHandle_t xQueueVl53L0;
+
 VL53L0X sensor;
 
 void TaskSensorVL53L0XLaser(void *pvParameters) {

@@ -1,5 +1,7 @@
 #include "TaskSensorTemt6000.h"
 
+QueueHandle_t xQueueTEMT6000;
+
 const float ADC_REF = 3.3;   // Điện áp tham chiếu ADC của ESP32
 const int ADC_MAX = 4095;
 

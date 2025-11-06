@@ -1,5 +1,7 @@
 #include "TaskAudio.h"
 
+extern QueueHandle_t xQueueAudio;
+
 // ========================== AUDIO ============================
 Audio audio;
 File root;

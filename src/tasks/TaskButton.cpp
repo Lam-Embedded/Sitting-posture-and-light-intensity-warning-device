@@ -4,52 +4,74 @@ extern QueueHandle_t xQueueButton;
 
 uint8_t debounceDelay = 50;
 
-bool ButtonPressed(uint8_t button, unsigned long debounceTime) {
-    static uint8_t buttonState = HIGH;
-    static uint8_t lastButtonState = HIGH;
-    static unsigned long lastDebounceTime = 0;
-    static bool buttonPressed = false;
+struct ButtonState {
+  uint8_t pin;
+  uint8_t buttonState;
+  uint8_t lastButtonState;
+  unsigned long lastDebounceTime;
+  bool buttonPressed;
+};
 
-    uint8_t readStatus = digitalRead(button);
+ButtonState btnStart   = {BUTTON_START, HIGH, HIGH, 0, false};
+ButtonState btnDetect  = {BUTTON_DETECT, HIGH, HIGH, 0, false};
+ButtonState btnSpeaker = {BUTTON_SPEAKER, HIGH, HIGH, 0, false};
 
-    if (readStatus != lastButtonState) {
-        lastDebounceTime = millis();
+bool ButtonPressed(ButtonState &btn, unsigned long debounceTime) {
+    uint8_t readStatus = digitalRead(btn.pin);
+
+    if (readStatus != btn.lastButtonState) {
+        btn.lastDebounceTime = millis();
     }
 
-    if ((millis() - lastDebounceTime) > debounceTime) {
-        if (readStatus != buttonState) {
-            buttonState = readStatus;
-            if (buttonState == HIGH) {
-                // do something
-                buttonPressed = true;
+    if ((millis() - btn.lastDebounceTime) > debounceTime) {
+        if (readStatus != btn.buttonState) {
+            btn.buttonState = readStatus;
+            if (btn.buttonState == LOW) { // active LOW
+                btn.buttonPressed = true;
             }
         }
     }
-    lastButtonState = readStatus;
 
-    if (buttonPressed) {
-        buttonPressed = false;
+    btn.lastButtonState = readStatus;
+
+    if (btn.buttonPressed) {
+        btn.buttonPressed = false;
         return true;
     }
-
     return false;
 }
 
 void TaskButton(void *pvParameters) {
     (void) pvParameters;
+
     pinMode(BUTTON_START, INPUT_PULLUP);
     pinMode(BUTTON_DETECT, INPUT_PULLUP);
     pinMode(BUTTON_SPEAKER, INPUT_PULLUP);
 
-    while (1) {
-        bool readStart = ButtonPressed(BUTTON_START, debounceDelay);
-        bool readDetect = ButtonPressed(BUTTON_DETECT, debounceDelay);
-        bool readSpeaker = ButtonPressed(BUTTON_SPEAKER, debounceDelay);
+    uint8_t buttonStateCount = 0;
 
-        if (readStart || readDetect || readSpeaker) {
-            uint8_t msg = 1;
+    while (1) {
+        bool readStart   = ButtonPressed(btnStart, debounceDelay);
+        bool readDetect  = ButtonPressed(btnDetect, debounceDelay);
+        bool readSpeaker = ButtonPressed(btnSpeaker, debounceDelay);
+
+        if (readStart) {
+            buttonStateCount = (buttonStateCount + 1) % 2;
+            uint8_t msg = buttonStateCount;
             xQueueSend(xQueueButton, &msg, portMAX_DELAY);
         }
+
+        if (readDetect) {
+            uint8_t msg = 2;
+            xQueueSend(xQueueButton, &msg, portMAX_DELAY);
+        }
+
+        if (readSpeaker) {
+            uint8_t msg = 3;
+            xQueueSend(xQueueButton, &msg, portMAX_DELAY);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
