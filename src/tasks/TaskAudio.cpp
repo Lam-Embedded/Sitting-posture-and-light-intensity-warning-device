@@ -14,7 +14,6 @@ void initAudio();
 void playCurrentFile();
 void audio_info(const char* info);
 
-
 void TaskAudio(void *pvParameters) {
     (void) pvParameters;
     initSD();
@@ -23,7 +22,7 @@ void TaskAudio(void *pvParameters) {
 
     while(1) {
         // do something
-        
+
         if (audio.isRunning()) {
             audio.loop();
         }
