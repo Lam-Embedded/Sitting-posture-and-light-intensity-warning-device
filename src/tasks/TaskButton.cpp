@@ -37,7 +37,10 @@ bool ButtonPressed(uint8_t button, unsigned long debounceTime) {
 
 void TaskButton(void *pvParameters) {
     (void) pvParameters;
-    
+    pinMode(BUTTON_START, INPUT_PULLUP);
+    pinMode(BUTTON_DETECT, INPUT_PULLUP);
+    pinMode(BUTTON_SPEAKER, INPUT_PULLUP);
+
     while (1) {
         bool readStart = ButtonPressed(BUTTON_START, debounceDelay);
         bool readDetect = ButtonPressed(BUTTON_DETECT, debounceDelay);

@@ -1,9 +1,19 @@
-#ifndef _SETUPWIFI_H_
-#define _SETUPWIFI_H_
+#ifndef SETUPWIFI_H
+#define SETUPWIFI_H
 
 #include <Arduino.h>
-#include <Wire.h>
+#include <WiFi.h>
+#include <WebServer.h>
+#include <DNSServer.h>
+#include <Preferences.h>
 
-void wifiSetup();
+// Hàm khởi tạo WiFi hoặc Captive Portal
+bool initWiFiConfig();
+
+// Hàm vòng lặp xử lý captive portal
+void handleWiFiPortalLoop();
+
+String getSavedApiKey();
+String getSavedPhone();
 
 #endif

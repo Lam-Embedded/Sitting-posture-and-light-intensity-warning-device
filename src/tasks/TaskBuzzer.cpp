@@ -4,6 +4,7 @@ extern QueueHandle_t xQueueButton;
 
 void TaskBuzzer(void *pvParameters) {
     (void) pvParameters;
+    pinMode(SPEAKER, OUTPUT);
     uint8_t receivedValue = 0;
 
     while (1) {
@@ -18,5 +19,5 @@ void TaskBuzzer(void *pvParameters) {
 }
 
 void createTaskBuzzer() {
-    xTaskCreatePinnedToCore(TaskBuzzer, "Buzzer", 2048, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(TaskBuzzer, "Buzzer", 1536, NULL, 1, NULL, 1);
 }
