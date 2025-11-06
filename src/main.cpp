@@ -1,8 +1,5 @@
 #include <Arduino.h>
 #include <WiFi.h>
-#include <Audio.h>
-#include <SD.h>
-#include <FS.h>
 
 #include "setUpWifi.h"
 #include "tasks/TaskButton.h"
@@ -17,8 +14,9 @@ void setup() {
     Serial.begin(115200);
     // PinMode
     pinMode(BUTTON_START, INPUT_PULLUP);
-    // Tạo queue có thể chứa 10 phần tử kiểu int
+    // Tạo queue
     xQueueButton = xQueueCreate(10, sizeof(uint8_t));
+
     if (xQueueButton == NULL) {
         Serial.println("Không thể tạo queue!");
         while (1);

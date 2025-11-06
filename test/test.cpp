@@ -26,7 +26,7 @@ File root;
 String audioFiles[5];             // Tối đa 5 file
 uint8_t totalFiles = 0;
 uint8_t currentIndex = 0;
-unsigned long lastButtonPress = 0;
+unsigned long lastButtonPress = 0;  
 
 // func
 void initSD();
