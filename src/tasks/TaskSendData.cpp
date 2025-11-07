@@ -4,22 +4,28 @@
 #include <UrlEncode.h>
 #include "setUpWifi.h"
 
+extern QueueHandle_t xQueueSendData;
+
 void sendTestMessage(const String &msg);
+
+uint8_t readDataState = 0;
 
 void TaskSendData(void *pvParameters) {
     (void) pvParameters;
 
-    if (WiFi.status() == WL_CONNECTED) {
-        sendTestMessage("Hello Nga ngo!!!");
-    } 
-
     while (1) {
-        // if (WiFi.status() == WL_CONNECTED) {
-        //     sendTestMessage("Hello Nga ngo!!!");
-        // } else {
-        //     Serial.println("⚠️ Wi-Fi not connected, skipping send...");
-        // }
-        // vTaskDelay(pdMS_TO_TICKS(10000));  // gửi mỗi 10 giây
+        if (xQueueReceive(xQueueSendData, &readDataState, portMAX_DELAY) == pdTRUE) {
+            if (readDataState == 1) {
+                if (WiFi.status() == WL_CONNECTED) {
+                    sendTestMessage("Đã ngồi sai tư thế!!!");
+                }
+            }
+            if (readDataState == 2) {
+                if (WiFi.status() == WL_CONNECTED) {
+                    sendTestMessage("Ánh sáng đang có vấn đề!!!!");
+                }
+            }
+        }
     }
 }
 

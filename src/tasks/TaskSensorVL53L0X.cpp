@@ -32,6 +32,15 @@ void TaskSensorVL53L0XLaser(void *pvParameters) {
             lastDistance = distance;
         }
 
+        if (distance <= 25 || distance >= 45) {
+            uint8_t msg = 1;
+            xQueueSend(xQueueVl53L0, &msg, portMAX_DELAY);
+        }
+        else {
+            uint8_t msg = 0;
+            xQueueSend(xQueueVl53L0, &msg, portMAX_DELAY);
+        }
+
         vTaskDelay(pdMS_TO_TICKS(100)); // tránh chiếm CPU
     }
 }

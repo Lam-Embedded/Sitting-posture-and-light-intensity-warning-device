@@ -14,6 +14,7 @@ QueueHandle_t xQueueButton;
 QueueHandle_t xQueueAudio;
 QueueHandle_t xQueueVL53L0X;
 QueueHandle_t xQueueTEMT6000;
+QueueHandle_t xQueueSendData;
 
 // Hàm khởi tạo các task (chạy sau khi WiFi kết nối thành công)
 void initTasks() {

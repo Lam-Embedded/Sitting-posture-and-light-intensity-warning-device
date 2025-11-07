@@ -1,6 +1,6 @@
 #include "TaskSensorTemt6000.h"
 
-QueueHandle_t xQueueTEMT6000;
+extern QueueHandle_t xQueueTEMT6000;
 
 const float ADC_REF = 3.3;   // Điện áp tham chiếu ADC của ESP32
 const int ADC_MAX = 4095;
@@ -20,6 +20,17 @@ void TaskSensorTemt6000(void *pvParameters) {
 
         if (fabs(lux - lastLux) > 5.0) {
             Serial.printf("Light: %.1f lux\n", lux);
+            
+            if (lux <= 400 || lux >= 750) {
+                uint8_t msg = 3;
+                xQueueSend(xQueueTEMT6000, &msg, portMAX_DELAY);
+            }
+            else {
+                uint8_t msg = 2;
+                xQueueSend(xQueueTEMT6000, &msg, portMAX_DELAY);
+            }
+            
+
             lastLux = lux;
         }
 

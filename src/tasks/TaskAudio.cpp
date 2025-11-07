@@ -2,6 +2,8 @@
 
 extern QueueHandle_t xQueueAudio;
 
+uint8_t readAudioState = 0;
+
 // ========================== AUDIO ============================
 Audio audio;
 File root;
@@ -13,7 +15,7 @@ uint8_t currentIndex = 0;
 void initSD();
 void scanAudioFiles();
 void initAudio();
-void playCurrentFile();
+void playCurrentFile(uint8_t indexFile);
 void audio_info(const char* info);
 
 void TaskAudio(void *pvParameters) {
@@ -24,6 +26,17 @@ void TaskAudio(void *pvParameters) {
 
     while(1) {
         // do something
+        if (xQueueReceive(xQueueAudio, &readAudioState, portMAX_DELAY) == pdTRUE) {
+            if (readAudioState == 1) {
+                currentIndex = 1;
+                playCurrentFile(currentIndex);
+            }
+            else if (readAudioState == 2) {
+                currentIndex = 1;
+                playCurrentFile(currentIndex);
+            }
+        }
+
 
         if (audio.isRunning()) {
             audio.loop();
@@ -74,8 +87,8 @@ void initAudio() {
     // audio.setInfoCallback(audio_info);
 }
 
-void playCurrentFile() {
-    String filePath = "/" + audioFiles[currentIndex];
+void playCurrentFile(uint8_t indexFile) {
+    String filePath = "/" + audioFiles[indexFile];
     Serial.printf("[PLAY] %s\n", filePath.c_str());
     audio.stopSong();
     audio.connecttoFS(SD, filePath.c_str());
