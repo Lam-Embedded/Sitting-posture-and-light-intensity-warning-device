@@ -1,6 +1,6 @@
 #include "TaskSensorVL53L0X.h"
 
-extern QueueHandle_t xQueueVl53L0;
+extern QueueHandle_t xQueueVL53L0X;
 
 VL53L0X sensor;
 
@@ -32,13 +32,13 @@ void TaskSensorVL53L0XLaser(void *pvParameters) {
             lastDistance = distance;
         }
 
-        if (distance <= 25 || distance >= 45) {
+        if (distance <= 250 || distance >= 450) {
             uint8_t msg = 1;
-            xQueueSend(xQueueVl53L0, &msg, portMAX_DELAY);
+            xQueueSend(xQueueVL53L0X, &msg, portMAX_DELAY);
         }
         else {
             uint8_t msg = 0;
-            xQueueSend(xQueueVl53L0, &msg, portMAX_DELAY);
+            xQueueSend(xQueueVL53L0X, &msg, portMAX_DELAY);
         }
 
         vTaskDelay(pdMS_TO_TICKS(100)); // tránh chiếm CPU
@@ -46,5 +46,5 @@ void TaskSensorVL53L0XLaser(void *pvParameters) {
 }
 
 void createTaskVL53L0X() {
-    xTaskCreatePinnedToCore(TaskSensorVL53L0XLaser, "VL53L0X", 1536, NULL, 2, NULL, 0);
+    xTaskCreatePinnedToCore(TaskSensorVL53L0XLaser, "VL53L0X", 4096, NULL, 2, NULL, 0);
 }

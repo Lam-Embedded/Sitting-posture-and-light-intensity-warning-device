@@ -4,16 +4,16 @@
 
 #include "tasks/TaskButton.h"
 #include "tasks/TaskSensorVL53L0X.h"
-#include "tasks/TaskSensorTemt6000.h"
-#include "tasks/TaskAudio.h"
+// #include "tasks/TaskSensorTemt6000.h"
+// #include "tasks/TaskAudio.h"
 #include "tasks/TaskBuzzer.h"
 #include "tasks/TaskSendData.h"
 #include "tasks/TaskManager.h"
 
 QueueHandle_t xQueueButton;
-QueueHandle_t xQueueAudio;
+// QueueHandle_t xQueueAudio;
 QueueHandle_t xQueueVL53L0X;
-QueueHandle_t xQueueTEMT6000;
+// QueueHandle_t xQueueTEMT6000;
 QueueHandle_t xQueueSendData;
 
 // Hàm khởi tạo các task (chạy sau khi WiFi kết nối thành công)
@@ -23,27 +23,32 @@ void initTasks() {
         Serial.println("❌ Không thể tạo queue Button!");
         while (1);
     }
-    xQueueAudio = xQueueCreate(10, sizeof(uint8_t));
-    if (xQueueAudio == NULL) {
-        Serial.println("❌ Không thể tạo queue Audio!");
-        while (1);
-    }
+    // xQueueAudio = xQueueCreate(10, sizeof(uint8_t));
+    // if (xQueueAudio == NULL) {
+    //     Serial.println("❌ Không thể tạo queue Audio!");
+    //     while (1);
+    // }
     xQueueVL53L0X = xQueueCreate(10, sizeof(uint8_t));
     if (xQueueVL53L0X == NULL) {
         Serial.println("❌ Không thể tạo queue VL53L0X!");
         while (1);
     }
-    xQueueTEMT6000 = xQueueCreate(10, sizeof(uint8_t));
-    if (xQueueTEMT6000 == NULL) {
-        Serial.println("❌ Không thể tạo queue TEMT6000!");
+    // xQueueTEMT6000 = xQueueCreate(10, sizeof(uint8_t));
+    // if (xQueueTEMT6000 == NULL) {
+    //     Serial.println("❌ Không thể tạo queue TEMT6000!");
+    //     while (1);
+    // }
+    xQueueSendData = xQueueCreate(10, sizeof(uint8_t));
+    if (xQueueSendData == NULL) {
+        Serial.println("❌ Không thể tạo queue VL53L0X!");
         while (1);
     }
 
     // Tạo các task
     createTaskButton();
     createTaskVL53L0X();
-    createTaskTemt6000();
-    createTaskAudio();
+    // createTaskTemt6000();
+    // createTaskAudio();
     createTaskBuzzer();
     createTaskSendData();
     createTaskManager();

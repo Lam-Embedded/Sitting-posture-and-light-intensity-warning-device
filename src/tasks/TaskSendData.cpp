@@ -47,11 +47,11 @@ void sendTestMessage(const String &msg) {
                  "&phone=" + phone +
                  "&text=" + urlEncode(msg);
 
-    Serial.println("🌐 Sending: " + url);
+    // Serial.println("🌐 Sending: " + url);
 
     http.begin(url);
     int code = http.GET();
-    Serial.printf("HTTP Response: %d\n", code);
+    // Serial.printf("HTTP Response: %d\n", code);
     if (code > 0)
         Serial.println(http.getString());
     http.end();

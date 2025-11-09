@@ -57,16 +57,19 @@ void TaskButton(void *pvParameters) {
 
         if (readStart) {
             buttonStateCount = (buttonStateCount + 1) % 2;
+            Serial.println("start");
             uint8_t msg = buttonStateCount;
             xQueueSend(xQueueButton, &msg, portMAX_DELAY);
         }
 
         if (readDetect) {
+            Serial.println("Detect");
             uint8_t msg = 2;
             xQueueSend(xQueueButton, &msg, portMAX_DELAY);
         }
 
         if (readSpeaker) {
+            Serial.println("speaker");
             uint8_t msg = 3;
             xQueueSend(xQueueButton, &msg, portMAX_DELAY);
         }
@@ -76,5 +79,5 @@ void TaskButton(void *pvParameters) {
 }
 
 void createTaskButton() {
-  xTaskCreatePinnedToCore(TaskButton, "Button", 2048, NULL, 2, NULL, 0);
+  xTaskCreatePinnedToCore(TaskButton, "Button", 4096, NULL, 2, NULL, 0);
 }
