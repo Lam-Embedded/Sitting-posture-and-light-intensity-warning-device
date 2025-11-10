@@ -52,28 +52,14 @@ void TaskButton(void *pvParameters) {
 
     while (1) {
         bool readStart   = ButtonPressed(btnStart, debounceDelay);
-        bool readDetect  = ButtonPressed(btnDetect, debounceDelay);
-        bool readSpeaker = ButtonPressed(btnSpeaker, debounceDelay);
 
+        // state start button = 0 or 1
         if (readStart) {
             buttonStateCount = (buttonStateCount + 1) % 2;
             Serial.println("start");
-            uint8_t msg = buttonStateCount;
-            xQueueSend(xQueueButton, &msg, portMAX_DELAY);
+            uint8_t msgStartButton = buttonStateCount;
+            xQueueSend(xQueueButton, &msgStartButton, portMAX_DELAY);
         }
-
-        if (readDetect) {
-            Serial.println("Detect");
-            uint8_t msg = 2;
-            xQueueSend(xQueueButton, &msg, portMAX_DELAY);
-        }
-
-        if (readSpeaker) {
-            Serial.println("speaker");
-            uint8_t msg = 3;
-            xQueueSend(xQueueButton, &msg, portMAX_DELAY);
-        }
-
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 }

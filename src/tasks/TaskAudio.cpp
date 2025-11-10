@@ -1,6 +1,7 @@
 #include "TaskAudio.h"
 
-extern QueueHandle_t xQueueAudio;
+extern QueueHandle_t xQueueVL53L0X;
+extern QueueHandle_t xQueueTEMT6000;
 
 uint8_t readAudioState = 0;
 
@@ -24,19 +25,37 @@ void TaskAudio(void *pvParameters) {
     scanAudioFiles();
     initAudio();
 
+    uint8_t readDistanceData = 0;
+    uint8_t readLuxData = 0;
+
+    bool distanceError = false;
+    bool luxError = false;
+
     while(1) {
         // do something
-        if (xQueueReceive(xQueueAudio, &readAudioState, portMAX_DELAY) == pdTRUE) {
-            if (readAudioState == 1) {
-                currentIndex = 1;
-                playCurrentFile(currentIndex);
-            }
-            else if (readAudioState == 2) {
-                currentIndex = 1;
-                playCurrentFile(currentIndex);
-            }
+        // --- 1. Đọc dữ liệu cảm biến ---
+        if (xQueuePeek(xQueueVL53L0X, &readDistanceData, 0) == pdTRUE) {
+            distanceError = (readDistanceData == 1);
         }
 
+        if (xQueuePeek(xQueueTEMT6000, &readLuxData, 0) == pdTRUE) {
+            luxError = (readLuxData == 1);
+        }
+
+        // --- 1. Nếu có lỗi từ cảm biến 
+        if (distanceError) {
+            playCurrentFile(1);
+            vTaskDelay(pdMS_TO_TICKS(150));
+        } else {
+            vTaskDelay(pdMS_TO_TICKS(200)); // nghỉ, tiết kiệm CPU
+        }
+
+        if (luxError) {
+            playCurrentFile(2);
+            vTaskDelay(pdMS_TO_TICKS(150));
+        } else {
+            vTaskDelay(pdMS_TO_TICKS(200)); // nghỉ, tiết kiệm CPU
+        }
 
         if (audio.isRunning()) {
             audio.loop();

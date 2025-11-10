@@ -1,33 +1,49 @@
 #include "TaskBuzzer.h"
 
 extern QueueHandle_t xQueueButton;
-// extern QueueHandle_t xQueueAudio;
+extern QueueHandle_t xQueueVL53L0X;
+extern QueueHandle_t xQueueTEMT6000;
 
 void TaskBuzzer(void *pvParameters) {
     (void) pvParameters;
     pinMode(SPEAKER, OUTPUT);
 
     uint8_t receivedValueButton = 0;
-    uint8_t receivedValueSensor = 0;
+    uint8_t readDistanceData = 0;
+    uint8_t readLuxData = 0;
+
+    bool distanceError = false;
+    bool luxError = false;
 
     while (1) {
-        if (xQueueReceive(xQueueButton, &receivedValueButton, pdMS_TO_TICKS(100)) == pdTRUE) {
-            Serial.printf("[Buzzer] Nhận nút: %d\n", receivedValueButton);
-            digitalWrite(SPEAKER, HIGH);
-            vTaskDelay(300 / portTICK_PERIOD_MS);
-            digitalWrite(SPEAKER, LOW);
-            vTaskDelay(300 / portTICK_PERIOD_MS);
+        // --- 1. Nhấn nút => kêu 1 lần ---
+        if (xQueueReceive(xQueueButton, &receivedValueButton, 0) == pdTRUE) {
+            if (receivedValueButton == 1) {
+                Serial.println("[Buzzer] Nút nhấn → Bíp 1 cái");
+                digitalWrite(SPEAKER, HIGH);
+                vTaskDelay(pdMS_TO_TICKS(200));
+                digitalWrite(SPEAKER, LOW);
+            }
         }
-        vTaskDelay(10 / portTICK_PERIOD_MS);
 
-        // if (xQueueReceive(xQueueAudio, &receivedValueSensor, portMAX_DELAY) == pdTRUE) {
-        //     if (receivedValueSensor == 1 || receivedValueSensor == 2 || receivedValueSensor == 3 || receivedValueSensor == 4) {
-        //         digitalWrite(27, HIGH);
-        //         vTaskDelay(300 / portTICK_PERIOD_MS);
-        //         digitalWrite(27, LOW);
-        //         vTaskDelay(300 / portTICK_PERIOD_MS);
-        //     }
-        // }
+        // --- 2. Đọc dữ liệu cảm biến ---
+        if (xQueuePeek(xQueueVL53L0X, &readDistanceData, 0) == pdTRUE) {
+            distanceError = (readDistanceData == 1);
+        }
+
+        if (xQueuePeek(xQueueTEMT6000, &readLuxData, 0) == pdTRUE) {
+            luxError = (readLuxData == 1);
+        }
+
+        // --- 3. Nếu có lỗi từ cảm biến -> bip liên tục ---
+        if (distanceError || luxError) {
+            digitalWrite(SPEAKER, HIGH);
+            vTaskDelay(pdMS_TO_TICKS(150));
+            digitalWrite(SPEAKER, LOW);
+            vTaskDelay(pdMS_TO_TICKS(150));
+        } else {
+            vTaskDelay(pdMS_TO_TICKS(200)); // nghỉ, tiết kiệm CPU
+        }
     }
 }
 
