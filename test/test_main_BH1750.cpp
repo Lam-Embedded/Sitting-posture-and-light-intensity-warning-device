@@ -12,6 +12,7 @@ void initTasks() {
 void setup() {
     Serial.begin(115200);
     delay(200);
+    pinMode(SPEAKER, OUTPUT);
     initTasks();
 }
 

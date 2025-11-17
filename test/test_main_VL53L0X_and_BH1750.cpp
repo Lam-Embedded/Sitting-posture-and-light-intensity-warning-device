@@ -14,6 +14,7 @@ void initTasks() {
 void setup() {
     Serial.begin(115200);
     delay(200);
+    pinMode(SPEAKER, OUTPUT);
 
     // Khởi tạo I2C bus dùng chung cho toàn bộ hệ thống
     initI2CBus();

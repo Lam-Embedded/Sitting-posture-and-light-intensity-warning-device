@@ -1,6 +1,5 @@
 #include "TaskBuzzer.h"
 
-extern QueueHandle_t xQueueButton;
 extern QueueHandle_t xQueueVL53L0X;
 extern QueueHandle_t xQueueTEMT6000;
 
@@ -16,16 +15,6 @@ void TaskBuzzer(void *pvParameters) {
     bool luxError = false;
 
     while (1) {
-        // --- 1. Nhấn nút => kêu 1 lần ---
-        if (xQueueReceive(xQueueButton, &receivedValueButton, 0) == pdTRUE) {
-            if (receivedValueButton == 1) {
-                Serial.println("[Buzzer] Nút nhấn → Bíp 1 cái");
-                digitalWrite(SPEAKER, HIGH);
-                vTaskDelay(pdMS_TO_TICKS(200));
-                digitalWrite(SPEAKER, LOW);
-            }
-        }
-
         // --- 2. Đọc dữ liệu cảm biến ---
         if (xQueuePeek(xQueueVL53L0X, &readDistanceData, 0) == pdTRUE) {
             distanceError = (readDistanceData == 1);

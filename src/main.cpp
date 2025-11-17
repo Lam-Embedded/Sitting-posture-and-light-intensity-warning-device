@@ -6,7 +6,6 @@
 #include "tasks/TaskSensorVL53L0X.h"
 #include "tasks/TaskSensorBH1750.h"
 #include "tasks/TaskAudio.h"
-#include "tasks/TaskBuzzer.h"
 #include "tasks/TaskSendData.h"
 
 QueueHandle_t xQueueButton;
@@ -37,13 +36,13 @@ void initTasks() {
     createTaskVL53L0X();
     createTaskBH1750();
     createTaskAudio();
-    createTaskBuzzer();
     createTaskSendData();
 }
 
 void setup() {
     Serial.begin(115200);
     delay(200);
+    pinMode(SPEAKER, OUTPUT);
 
     Serial.println("\n=== ESP32 Smart Device Boot ===");
 

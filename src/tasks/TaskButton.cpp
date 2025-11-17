@@ -28,6 +28,7 @@ bool ButtonPressed(ButtonState &btn, unsigned long debounceTime) {
             btn.buttonState = readStatus;
             if (btn.buttonState == LOW) { // active LOW
                 btn.buttonPressed = true;
+                tone(SPEAKER, 2000, 50);
             }
         }
     }
@@ -49,9 +50,12 @@ void TaskButton(void *pvParameters) {
     pinMode(BUTTON_SPEAKER, INPUT_PULLUP);
 
     uint8_t buttonStateCount = 0;
+    uint8_t buttonDetectStateCount = 1;
 
     while (1) {
         bool readStart   = ButtonPressed(btnStart, debounceDelay);
+        bool readDetect  = ButtonPressed(btnDetect, debounceDelay);
+        bool readSpeaker = ButtonPressed(btnSpeaker, debounceDelay);
 
         // state start button = 0 or 1
         if (readStart) {
@@ -59,6 +63,17 @@ void TaskButton(void *pvParameters) {
             Serial.println("start");
             uint8_t msgStartButton = buttonStateCount;
             xQueueSend(xQueueButton, &msgStartButton, portMAX_DELAY);
+        }
+
+        // state detect button = 2 or 3
+        if (readDetect) {
+            buttonDetectStateCount++;
+            Serial.println("Detect");
+            uint8_t msgDetectButton = buttonDetectStateCount;
+            xQueueSend(xQueueButton, &msgDetectButton, portMAX_DELAY);
+            if (buttonDetectStateCount >= 3) {
+                buttonDetectStateCount = 1;
+            }
         }
         vTaskDelay(pdMS_TO_TICKS(10));
     }

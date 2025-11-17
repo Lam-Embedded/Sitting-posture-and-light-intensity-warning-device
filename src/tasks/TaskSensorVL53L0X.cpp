@@ -28,6 +28,14 @@ void TaskSensorVL53L0XLaser(void *pvParameters) {
             Serial.printf("[VL53] Distance: %d mm\n", distance);
         }
 
+        if (distance < 20 || distance > 45) {
+            tone(SPEAKER, 3000, 30);
+            vTaskDelay(pdMS_TO_TICKS(50));
+        }
+        else {
+            noTone(SPEAKER);
+        }
+
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }

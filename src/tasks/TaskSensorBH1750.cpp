@@ -29,6 +29,14 @@ void TaskSensorBH1750(void *pvParameters) {
             Serial.printf("[BH1750] Light: %.1f lux\n", lux);
         }
 
+        if (lux < 300) {
+            tone(SPEAKER, 3000, 30);
+            vTaskDelay(pdMS_TO_TICKS(50));
+        }
+        else {
+            noTone(SPEAKER);
+        }
+
         vTaskDelay(pdMS_TO_TICKS(120));
     }
 }

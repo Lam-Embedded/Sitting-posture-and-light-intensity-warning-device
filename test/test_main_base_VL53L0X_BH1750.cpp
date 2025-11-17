@@ -8,6 +8,7 @@ BH1750 lightMeter;
 
 void setup() {
   Serial.begin(115200);
+  pinMode(SPEAKER, OUTPUT);
 
   // Khởi động I2C
   Wire.begin(21, 22);   // SDA, SCL (tùy board, có thể bỏ vì ESP32 mặc định là 21/22)
