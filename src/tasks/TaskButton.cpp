@@ -80,9 +80,6 @@ void TaskButton(void *pvParameters) {
             Serial.println("speaker");
             uint8_t msgSpeakerButton = buttonSpeakerStateCount;
             xQueueSend(xQueueButton, &msgSpeakerButton, portMAX_DELAY);
-            if (buttonSpeakerStateCount >= 5) {
-                buttonSpeakerStateCount = 3;
-            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(10));
