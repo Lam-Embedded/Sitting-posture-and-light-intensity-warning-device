@@ -4,7 +4,7 @@
 
 #include "tasks/TaskButton.h"
 #include "tasks/TaskSensorVL53L0X.h"
-#include "tasks/TaskSensorTemt6000.h"
+#include "tasks/TaskSensorBH1750.h"
 #include "tasks/TaskAudio.h"
 #include "tasks/TaskBuzzer.h"
 #include "tasks/TaskSendData.h"
@@ -35,7 +35,7 @@ void initTasks() {
     // Tạo các task
     createTaskButton();
     createTaskVL53L0X();
-    createTaskTemt6000();
+    createTaskBH1750();
     createTaskAudio();
     createTaskBuzzer();
     createTaskSendData();

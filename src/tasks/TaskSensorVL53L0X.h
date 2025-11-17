@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <VL53L0X.h>
+#include "I2CBus.h"
 
 void createTaskVL53L0X();
 
