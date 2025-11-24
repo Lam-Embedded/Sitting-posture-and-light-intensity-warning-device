@@ -34,6 +34,10 @@ void TaskSendData(void *pvParameters) {
                 if (readSensor == 1 && WiFi.status() == WL_CONNECTED) {
                     sendTestMessage("⚠️ Tư thế ngồi sai! Hãy điều chỉnh lại.");
                 }
+
+                if (readSensor == 2 && WiFi.status() == WL_CONNECTED) {
+                    sendTestMessage("⚠️ ánh sáng chưa phù hợp, điều chỉnh lại");
+                }
             }
         }
     }

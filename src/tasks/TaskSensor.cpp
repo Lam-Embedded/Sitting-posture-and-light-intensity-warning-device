@@ -23,8 +23,8 @@ ButtonState btnDetect  = {BUTTON_DETECT, HIGH, HIGH, 0, false};
 ButtonState btnSpeaker = {BUTTON_SPEAKER, HIGH, HIGH, 0, false};
 
 bool ButtonPressed(ButtonState &btn, unsigned long debounceTime);
-void action();
-void sensor();
+void readSensor();
+void notificationMode(uint8_t mode_setup);
 
 void TaskSensor(void *pvParameters) {
     (void) pvParameters;
@@ -62,9 +62,9 @@ void TaskSensor(void *pvParameters) {
         if (running) {
             if (readDetect) {
                 mode++;
-                mode = (mode > 2) ? 0 : mode;
+                mode = (mode > 3) ? 0 : mode;
             }
-            action();
+            readSensor();
         }
 
         vTaskDelay(pdMS_TO_TICKS(120));
@@ -75,24 +75,20 @@ void createTaskSensor() {
     xTaskCreatePinnedToCore(TaskSensor, "sensor", 4096, NULL, 2, NULL, 1);
 }
 
-void action() {
-     // ---- MODE FILTER ----
-    switch (mode) {
-        case 1:
-
-            break;
-        case 2:
-        
-            break;
-        case 3: 
-
-            break;
-        default:
-            break;
+void notificationMode(uint8_t mode_setup) {
+    if (mode_setup == 0) {
+        xQueueSend(xQueueSensor, &msg, portMAX_DELAY);
+        tone(SPEAKER, 3000, 30);
+    }
+    else if (mode_setup == 1) {
+        tone(SPEAKER, 3000, 30);
+    }
+    else {
+        xQueueSend(xQueueSensor, &msg, portMAX_DELAY);
     }
 }
 
-void sensor() {
+void readSensor() {
     // Đọc VL53L0X
     int distance = sensorToF.readRangeContinuousMillimeters();
     if (sensorToF.timeoutOccurred()) {
@@ -101,16 +97,18 @@ void sensor() {
     // Đọc BH1750
     float lux = lightMeter.readLightLevel();
     // Print
-    Serial.print("Distance: ");
-    Serial.print(distance);
-    Serial.print(" mm   |   Lux: ");
-    Serial.print(lux);
-    Serial.println(" lx");
-    if (distance < 200 || distance > 450 || lux < 300 || lux > 700) {
-        // send data
+    // Serial.print("Distance: ");
+    // Serial.print(distance);
+    // Serial.print(" mm   |   Lux: ");
+    // Serial.print(lux);
+    // Serial.println(" lx");
+    if (distance < 200 || distance > 450) {
         msg = 1;
-        xQueueSend(xQueueSensor, &msg, portMAX_DELAY);
-        tone(SPEAKER, 3000, 30);
+        notificationMode(mode);
+    }
+    else if (lux < 300 || lux > 700) {
+        msg = 2;
+        notificationMode(mode);
     }
     else {
         msg = 0;
