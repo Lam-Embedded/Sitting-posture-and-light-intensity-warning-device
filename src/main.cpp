@@ -3,40 +3,32 @@
 #include "setUpWifi.h"
 
 #include "tasks/TaskButton.h"
-#include "tasks/TaskSensorVL53L0X.h"
-#include "tasks/TaskSensorBH1750.h"
 #include "tasks/TaskAudio.h"
 #include "tasks/TaskSendData.h"
+#include "tasks/TaskSensor.h"
 
-QueueHandle_t xQueueButton;
+// QueueHandle_t xQueueButton;
 QueueHandle_t xQueueAudio;
-QueueHandle_t xQueueVL53L0X;
-QueueHandle_t xQueueTEMT6000;
+QueueHandle_t xQueueSensor;
 
 // Hàm khởi tạo các task (chạy sau khi WiFi kết nối thành công)
 void initTasks() {
-    xQueueButton = xQueueCreate(10, sizeof(uint8_t));
-    if (xQueueButton == NULL) {
-        Serial.println("❌ Không thể tạo queue Button!");
-        while (1);
-    }
-    xQueueVL53L0X = xQueueCreate(10, sizeof(uint8_t));
-    if (xQueueVL53L0X == NULL) {
-        Serial.println("❌ Không thể tạo queue VL53L0X!");
-        while (1);
-    }
-    xQueueTEMT6000 = xQueueCreate(10, sizeof(uint8_t));
-    if (xQueueTEMT6000 == NULL) {
-        Serial.println("❌ Không thể tạo queue TEMT6000!");
+    // xQueueButton = xQueueCreate(10, sizeof(uint8_t));
+    // if (xQueueButton == NULL) {
+    //     Serial.println("❌ Không thể tạo queue Button!");
+    //     while (1);
+    // }
+    xQueueSensor = xQueueCreate(10, sizeof(uint8_t));
+    if (xQueueSensor == NULL) {
+        Serial.println("❌ Không thể tạo queue sensor!");
         while (1);
     }
 
     // Tạo các task
-    createTaskButton();
-    createTaskVL53L0X();
-    createTaskBH1750();
-    createTaskAudio();
+    // createTaskButton();
+    // createTaskAudio();
     createTaskSendData();
+    createTaskSensor();
 }
 
 void setup() {

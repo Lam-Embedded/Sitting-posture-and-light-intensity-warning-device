@@ -30,7 +30,7 @@ void TaskAudio(void *pvParameters) {
 
     while(1) {
 
-        playCurrentFile(1);
+        playCurrentFile(0);
 
         if (audio.isRunning()) {
             audio.loop();

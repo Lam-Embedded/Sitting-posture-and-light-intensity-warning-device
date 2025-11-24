@@ -4,12 +4,11 @@
 #include <UrlEncode.h>
 #include "setUpWifi.h"
 
-extern QueueHandle_t xQueueVL53L0X;
-extern QueueHandle_t xQueueTEMT6000;
+extern QueueHandle_t xQueueSensor;
 
 void sendTestMessage(const String &msg);
 
-uint8_t readDistanceData = 0;
+uint8_t readSensor = 0;
 uint8_t readLuxData = 0;
 
 void TaskSendData(void *pvParameters) {
@@ -17,39 +16,26 @@ void TaskSendData(void *pvParameters) {
 
     // pinMode(BUTTON_SPEAKER, INPUT_PULLUP);
 
-    uint8_t lastDistanceError = 0;
-    uint8_t lastLuxError = 0;
+    uint8_t lastSensor = 0;
 
-    while(1) {
-        if(digitalRead(BUTTON_SPEAKER) == LOW) {
-            sendTestMessage("Hello!!!");
+    // while(1) {
+    //     if(digitalRead(BUTTON_SPEAKER) == LOW) {
+    //         sendTestMessage("Hello!!!");
             
-        }
-        vTaskDelay(pdMS_TO_TICKS(200)); // tránh chiếm CPU
-    }
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(200)); // tránh chiếm CPU
+    // }
 
     while (1) {
-        // Đọc VL53L0X (non-blocking)
-        if (xQueuePeek(xQueueVL53L0X, &readDistanceData, 0) == pdTRUE) {
-            if (readDistanceData != lastDistanceError) {
-                lastDistanceError = readDistanceData;
-                if (readDistanceData == 1 && WiFi.status() == WL_CONNECTED) {
+        if (xQueueReceive(xQueueSensor, &readSensor, portMAX_DELAY) == pdTRUE) {
+            if (readSensor != lastSensor) {
+                lastSensor = readSensor;
+
+                if (readSensor == 1 && WiFi.status() == WL_CONNECTED) {
                     sendTestMessage("⚠️ Tư thế ngồi sai! Hãy điều chỉnh lại.");
                 }
             }
         }
-
-        // Đọc TEMT6000 (non-blocking)
-        if (xQueuePeek(xQueueTEMT6000, &readLuxData, 0) == pdTRUE) {
-            if (readLuxData != lastLuxError) {
-                lastLuxError = readLuxData;
-                if (readLuxData == 1 && WiFi.status() == WL_CONNECTED) {
-                    sendTestMessage("💡 Cường độ ánh sáng không phù hợp, hãy kiểm tra lại!");
-                }
-            }
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(200)); // tránh chiếm CPU
     }
 }
 
