@@ -102,11 +102,11 @@ void readSensor() {
     // Serial.print(" mm   |   Lux: ");
     // Serial.print(lux);
     // Serial.println(" lx");
-    if (distance < 200 || distance > 450) {
+    if (distance < 200 || distance > 600) {
         msg = 1;
         notificationMode(mode);
     }
-    else if (lux < 300 || lux > 700) {
+    else if (lux < 200 || lux > 900) {
         msg = 2;
         notificationMode(mode);
     }
