@@ -58,11 +58,11 @@ void TaskSensor(void *pvParameters) {
             running = !running;
         }
 
-        // ----------- CHẠY RADAR -----------
         if (running) {
             if (readDetect) {
                 mode++;
                 mode = (mode > 3) ? 0 : mode;
+                Serial.println(mode);
             }
             readSensor();
         }
@@ -78,13 +78,14 @@ void createTaskSensor() {
 void notificationMode(uint8_t mode_setup) {
     if (mode_setup == 0) {
         xQueueSend(xQueueSensor, &msg, portMAX_DELAY);
-        tone(SPEAKER, 3000, 30);
+        tone(SPEAKER, 5000, 30);
     }
     else if (mode_setup == 1) {
-        tone(SPEAKER, 3000, 30);
+        tone(SPEAKER, 5000, 30);
     }
     else {
         xQueueSend(xQueueSensor, &msg, portMAX_DELAY);
+        noTone(SPEAKER);
     }
 }
 
