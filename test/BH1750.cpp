@@ -19,12 +19,8 @@ void loop() {
 
   float lux = lightMeter.readLightLevel();
 
-  if (lux == 54612) {
-    Serial.println("BH1750 saturated!");
-  } else if (lux < 0) {
-    Serial.println("BH1750 error!");
-  } else {
-    Serial.printf("Light: %.1f lux\n", lux);
+  if (lux > 900 || lux < 200) {
+    Serial.println("Loi anh sang");
   }
 
   delay(120);   // match measurement time

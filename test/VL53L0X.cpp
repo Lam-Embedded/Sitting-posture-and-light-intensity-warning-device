@@ -28,5 +28,9 @@ void loop() {
     Serial.println(" mm");
   }
 
+  if (distance > 450 || distance < 20) {
+    Serial.println("Tu the ngoi khong chinh xac");
+  }
+
   delay(500);
 }
